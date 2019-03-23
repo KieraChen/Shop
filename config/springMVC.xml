@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/mvc
+                           http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                           http://www.springframework.org/schema/aop 
+                           http://www.springframework.org/schema/aop/spring-aop.xsd
+                           http://www.springframework.org/schema/tx 
+                           http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+<!-- Controller对象不需要创建，Spring以注解的方式创建，但要扫描注解 -->
+<context:component-scan base-package="com"></context:component-scan>
+
+<!--  使用：<mvc:annotation-driven/> 后，替代了：RequestMappingHandlerMapping，RequestMappingHandlerAdapter的创建。并提供json格式的数据支持，是最终配置！！！！！！！-->
+<mvc:annotation-driven/>
+
+<!-- 
+    配置视图解析器：负责解析出物理视图
+    后台如果返回逻辑视图：index
+    解析出物理视图为：前缀+逻辑视图+后缀 ：/WEB-INF/jsps/index.jsp
+ -->
+<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+  <property name="prefix" value="/WEB-INF/jsps/"></property>
+   <property name="suffix" value=".jsp"></property>
+</bean>
+</beans>

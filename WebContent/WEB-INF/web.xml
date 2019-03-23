@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>shop</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  
+  <!-- ServletContext的启动，可以具有初始化参数的加载 -->
+  <!-- 
+    确定spring配置文件位置
+    默认加载xml位置：/WEB-INF/applicationContext.xml
+    但我们希望xml的位置在：   /WEB-INF/classes/applicationContext.xml (开发时候对应src路径下)
+   -->
+  <context-param>
+  	<param-name>contextConfigLocation</param-name>
+  	<param-value>classpath:applicationContext.xml</param-value>
+  </context-param>
+  <!-- 配置spring的监听器，加载xml配置文件 -->
+  <!-- ContextLoaderListener是spring提供监听器 ，实现了ServletContextListener的接口 -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+  
+<!-- 防止前台post表单提交时出现的乱码，配置spring编码过滤器 -->
+  <filter>
+    <filter-name>characterEncoding</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+        <param-name>encoding</param-name>
+        <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+     <filter-name>characterEncoding</filter-name>
+     <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <!-- springMVC的核心控制器是一个servlet,对所有.do的请求进行处理 -->
+  <servlet>
+    <servlet-name>springMVC</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <!-- 
+       注意：可以不配置初始化参数（加载contextConfigLocation）
+       默认加载springmvc的配置文件，要符合以下规则：
+        1.命名规则，名字：servlet-name-servlet.xml(本例为：springMVC-servlet.xml)
+        2.路径：springMVC-servlet.xml必须放在WEB-INF下
+     -->
+    <init-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:springMVC.xml</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>springMVC</servlet-name>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+  
+</web-app>

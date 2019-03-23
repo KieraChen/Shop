@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<settings>
+   <!-- 开启延迟加载-->
+   <setting name="lazyLoadingEnabled" value="true"/>
+   
+   <!-- 设置积极的懒加载 -->
+   <setting name="aggressiveLazyLoading" value="false"/>
+   
+
+   <!-- 
+        开启二级缓存的总开关！！！
+        注意：
+       1. 还需要在mapper映射文件中开启二级缓存,哪个Mapper用，哪个Mapper开启
+          Mapper.xml中：<cache/>
+       2. 二级缓存持续的周期长，一般存在内存中，如果内存的容量不够，还需借助硬盘的空间，
+            而存在硬盘中的话，就需要将java的对象持久化(在哪个javaBean上序列化，取决于
+            你想缓存什么类型的数据)
+    -->
+   <setting name="cacheEnabled" value="true"/>
+</settings>
+</configuration>

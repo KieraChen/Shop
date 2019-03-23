@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/mvc
+                           http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                           http://www.springframework.org/schema/aop 
+                           http://www.springframework.org/schema/aop/spring-aop.xsd
+                           http://www.springframework.org/schema/tx 
+                           http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+   <!-- 扫描注解 -->
+   <context:component-scan base-package="com"></context:component-scan>
+   
+<!--   第一步：配置数据源
+      加载java的配置文件
+   <context:property-placeholder location="classpath:db.properties"/> -->
+   
+      <!-- 创建数据源 -->
+   <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+       <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+       <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/shop"></property>
+       <property name="user" value="root"></property>
+       <property name="password" value=""></property>
+   </bean>
+    
+   <!-- 第二步：创建SqlSessionFactory,生产SqlSession -->
+   <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+      <!-- 加载mybatis的全局配置文件 -->
+      <property name="configLocation" value="classpath:sqlMapConfig.xml"></property>
+      <!-- 注入数据源 -->
+      <property name="dataSource" ref="dataSource"></property>
+   </bean>
+
+
+  <!-- 批量生成Mapper接口的代理类,注意：生成bean（Mapper接口代理类对象）默认的id为Mapper接口的类名，首字母小写！！！！ -->
+  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+     <!-- 配置，扫描哪个基础包，才能生成mapper的代理对象 -->
+     <property name="basePackage" value="com.dao"></property>
+     
+     <!-- 注意：SqlSessionFactory不需要配置，会从当前的配置文件的上下文中，找到一个配置的SqlSessionFactory注入到实现类中。前提，上下文中只有一个SqlSessionFactory时
+      -->
+     <!-- 默认不需要配置SqlSessionFactory 想配置也可以，如下，
+           比较特别，通过value来配置 SqlSessionFactory的id-->
+     <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+  </bean>
+   
+   <!-- 第三步：事务，在service层加事务 -->
+   <!-- 事务管理器 -->
+   <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+      <property name="dataSource" ref="dataSource"></property>
+   </bean>
+   
+   <!-- 配置通知 -->
+   <tx:advice id="txAdvice" transaction-manager="txManager">
+      <!-- 配置事务详情 -->
+      <tx:attributes>
+         <tx:method name="add*" propagation="REQUIRED" isolation="DEFAULT"/>
+         <tx:method name="update*" propagation="REQUIRED" isolation="DEFAULT"/>
+         <tx:method name="delete*" propagation="REQUIRED" isolation="DEFAULT"/>
+         <tx:method name="find*" propagation="REQUIRED" isolation="DEFAULT"/>
+         <tx:method name="*" propagation="REQUIRED" isolation="DEFAULT"/>
+      </tx:attributes>
+   </tx:advice>
+   
+   <!-- 配置切面 -->
+   <aop:config>
+      <aop:advisor advice-ref="txAdvice" pointcut="execution(* com.service.*.*(..))"/>
+   </aop:config>
+   
+</beans>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper    
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.UserMapper">
+
+<!--  <select id="findUserByUsernameAndPwd" parameterType="com.domain.User" resultType="com.domain.User">
+      select * from user where username = #{username} and password = #{password}
+ </select> -->
+ 
+ <select id="findUser" parameterType="com.domain.User" resultType="com.domain.User">
+      select * from user
+      <!-- where标签，默认去掉后面第一个"and"字符，如果没有参数传入，则把自己干掉 -->
+      <where>
+          <!-- if标签:可以对输入的参数进行判断 -->    
+              <if test="username != null and username !='' ">
+                 and username = #{username}
+              </if>
+              <if test="password != null and password != '' ">
+                 and password = #{password}
+              </if>
+              <if test="phone != null and phone != '' ">
+                 and phone = #{phone}
+              </if>
+      </where>
+   </select>
+ 
+
+ <insert id="insertUser" parameterType="com.domain.User">
+      <selectKey keyProperty="uid" resultType="int" order="AFTER">
+         select LAST_INSERT_ID()
+      </selectKey>
+      insert into user(username,password,name,email,phone,addr,state) 
+      values(#{username},#{password},#{name},#{email},#{phone},#{addr},#{state})
+ </insert>
+
+
+
+</mapper>
